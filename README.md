@@ -1,5 +1,5 @@
-# pico-template
-rpi pico template
+# pico template with scheduler
+rpi pico template with scheduler
 
 ## prepare
 
@@ -24,4 +24,17 @@ sudo apt update && sudo apt install -y cmake make ninja-build gcc g++ openssl li
 
 ```shell
 make
+```
+
+## Usage
+
+```shell
+# build
+make
+# clang-format
+make format
+# clear build
+make clean
+# rebuild
+make rebuild
 ```

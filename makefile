@@ -15,3 +15,6 @@ clean:
 	@if [ -d "./$(BUILD_DIR)" ]; then rm ./$(BUILD_DIR) -r; fi
 
 rebuild: clean build
+
+format:
+	bash format.sh

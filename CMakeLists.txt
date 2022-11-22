@@ -16,7 +16,13 @@ add_executable(RP2040_Template main.c)
 # hardware_clocks hardware_i2c hardware_pio hardware_interp hardware_rtc hardware_uart hardware_irq hardware_resets
 # pico_unique_id
 # tinyusb_host tinyusb_device tinyusb_board
-target_link_libraries(RP2040_Template scheduler pico_stdlib hardware_adc hardware_sync)
+target_link_libraries(RP2040_Template
+	scheduler
+	pico_stdlib
+	pico_sync
+	hardware_adc
+	hardware_sync
+)
 
 # Create map/bin/hex/uf2 files
 pico_add_extra_outputs(RP2040_Template)

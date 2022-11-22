@@ -11,12 +11,16 @@
 
 #define LED_PIN PICO_DEFAULT_LED_PIN
 
-volatile uint32_t int_cache;
+#include "pico/sync.h"
+critical_section_t scheduler_lock;
+static __inline void CRITICAL_REGION_INIT(void) {
+	critical_section_init(&scheduler_lock);
+}
 static __inline void CRITICAL_REGION_ENTER(void) {
-	int_cache = save_and_disable_interrupts();
+	critical_section_enter_blocking(&scheduler_lock);
 }
 static __inline void CRITICAL_REGION_EXIT(void) {
-	restore_interrupts(int_cache);
+	critical_section_exit(&scheduler_lock);
 }
 
 bool timer_4hz_callback(struct repeating_timer* t) {
@@ -60,6 +64,7 @@ void main_handler(uevt_t* evt) {
 }
 
 int main() {
+	CRITICAL_REGION_INIT();
 	app_sched_init();
 	user_event_init();
 	user_event_handler_regist(main_handler);

@@ -6,9 +6,8 @@ rpi pico template with scheduler
 ### Get pico SDK
 
 ```shell
-git clone https://gitee.com/xianii/pico-sdk
+git clone https://github.com/raspberrypi/pico-sdk --depth=1 --recurse-submodules --shallow-submodules -j8
 cd pico-sdk
-git submodule update --init
 
 ## Add pico-sdk Path to your environment
 echo export PICO_SDK_PATH=$PWD >> ~/.profile

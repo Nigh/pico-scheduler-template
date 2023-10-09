@@ -84,6 +84,7 @@ int main() {
 	while(true) {
 		app_sched_execute();
 		tud_task();
+		// cdc_task();
 		__wfi();
 	}
 }

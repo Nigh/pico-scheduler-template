@@ -1,1 +1,1 @@
-find . -not -path "./[build|\.git]*" | grep '^.*\.[ch]$' | xargs clang-format -style=file --verbose -i 
+find . -not -path "./build*" -a -not -path "./.git*" -name "*.[c|h]" | xargs clang-format -style=file --verbose -i 

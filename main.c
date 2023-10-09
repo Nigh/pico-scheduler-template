@@ -1,5 +1,4 @@
 
-#include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/adc.h"
 #include "hardware/sync.h"
@@ -8,6 +7,8 @@
 #include "scheduler/scheduler.h"
 
 #include "platform.h"
+
+#include "tusb.h"
 
 #define LED_PIN PICO_DEFAULT_LED_PIN
 
@@ -24,7 +25,7 @@ static __inline void CRITICAL_REGION_EXIT(void) {
 }
 
 bool timer_4hz_callback(struct repeating_timer* t) {
-	printf("Repeat at %lld\n", time_us_64());
+	LOG_RAW("Repeat at %lld\n", time_us_64());
 	uevt_bc_e(UEVT_TIMER_4HZ);
 	return true;
 }
@@ -58,7 +59,7 @@ void main_handler(uevt_t* evt) {
 			temperature_routine();
 			break;
 		case UEVT_ADC_TEMPERATURE_RESULT:
-			printf("Temperature is %0.2f\n", *((float*)(evt->content)));
+			LOG_RAW("Temperature is %0.2f\n", *((float*)(evt->content)));
 			break;
 	}
 }
@@ -68,8 +69,6 @@ int main() {
 	app_sched_init();
 	user_event_init();
 	user_event_handler_regist(main_handler);
-
-	stdio_init_all();
 
 	adc_init();
 	adc_set_temp_sensor_enabled(true);
@@ -81,8 +80,10 @@ int main() {
 	struct repeating_timer timer;
 	add_repeating_timer_ms(250, timer_4hz_callback, NULL, &timer);
 
+	tusb_init();
 	while(true) {
 		app_sched_execute();
+		tud_task();
 		__wfi();
 	}
 }

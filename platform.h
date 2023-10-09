@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 #if G_LOG_ENABLED == 1
-	#define LOG_RAW(...) printf(__VA_ARGS__)
+	#define LOG_RAW(...)
 #endif
 
 // REGEXP: #define UEVT_\S+_BASE

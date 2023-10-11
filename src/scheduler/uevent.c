@@ -8,13 +8,10 @@
 #define EVT_HANDLER_LENGTH (32)
 
 __attribute__((weak)) void user_event_dispatcher(uevt_t evt) {
-	LOG_RAW("[ERROR]event dispatcher NOT set!!!\r\n");
+	uevt_log("[ERROR]event dispatcher NOT set!!!\r\n");
 }
 
 __attribute__((weak)) void user_event_handler(uevt_t* evt) {
-#if G_LOG_ENABLED == 1 && EVT_LOG_ENABLED == 1
-	LOG_RAW("EVT Pop:%04X\r\n", evt->evt_id);
-#endif
 	user_event_array_dispatcher(*evt);
 }
 
@@ -40,7 +37,7 @@ void user_event_handler_regist(fpevt_h func) {
 	// 插入空闲插槽
 	for(uint8_t i = 0; i < EVT_HANDLER_LENGTH; i++) {
 		if(evt_handler_array[i] == NULL) {
-			// LOG_RAW("REG %x to %d\n",func,i);
+			// uevt_log("REG %x to %d\n",func,i);
 			evt_handler_array[i] = func;
 			return;
 		}
@@ -61,7 +58,6 @@ void user_event_handler_unregist(fpevt_h func) {
 void user_event_array_dispatcher(uevt_t evt) {
 	for(uint8_t i = 0; i < EVT_HANDLER_LENGTH; i++) {
 		if(evt_handler_array[i] != NULL) {
-			// LOG_RAW("dispatch %04x to array[%d]=%x\n",evt.evt_id,i,evt_handler_array[i]);
 			(*(evt_handler_array[i]))(&evt);
 		}
 	}

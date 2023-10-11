@@ -3,8 +3,27 @@
 #define _PLATFORM_H_
 #include <stdint.h>
 #include <stdbool.h>
+#include "tusb.h"
+#include "cdc.h"
 
 #if G_LOG_ENABLED == 1
+char log_cache[128];
+char log_buffer[512];
+uint16_t log_ptr = 0;
+int16_t log_length;
+	#define LOG_RAW(...) \
+		do { \
+			log_length = sprintf(log_cache, __VA_ARGS__) + 1; \
+			if(log_length > 1) { \
+				if(log_ptr + log_length >= 512) { \
+					log_ptr = 0; \
+				} \
+				memcpy(log_buffer + log_ptr, log_cache, log_length); \
+				cdc_log_print(log_buffer + log_ptr); \
+				log_ptr += log_length; \
+			} \
+		} while(0);
+#else
 	#define LOG_RAW(...)
 #endif
 

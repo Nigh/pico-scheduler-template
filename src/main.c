@@ -8,8 +8,6 @@
 
 #include "platform.h"
 
-#include "tusb.h"
-
 #define LED_PIN PICO_DEFAULT_LED_PIN
 
 #include "pico/sync.h"
@@ -25,7 +23,7 @@ static __inline void CRITICAL_REGION_EXIT(void) {
 }
 
 bool timer_4hz_callback(struct repeating_timer* t) {
-	LOG_RAW("Repeat at %lld\n", time_us_64());
+	LOG_RAW("At %lld ms\n", time_us_64() / 1000);
 	uevt_bc_e(UEVT_TIMER_4HZ);
 	return true;
 }
@@ -59,11 +57,16 @@ void main_handler(uevt_t* evt) {
 			temperature_routine();
 			break;
 		case UEVT_ADC_TEMPERATURE_RESULT:
-			LOG_RAW("Temperature is %0.2f\n", *((float*)(evt->content)));
+			LOG_RAW("Temperature is %0.1f\n", *((float*)(evt->content)));
 			break;
 	}
 }
 
+void uevt_log(char* str) {
+	LOG_RAW("%s\n", str);
+}
+
+extern void cdc_task(void);
 int main() {
 	CRITICAL_REGION_INIT();
 	app_sched_init();
@@ -84,7 +87,7 @@ int main() {
 	while(true) {
 		app_sched_execute();
 		tud_task();
-		// cdc_task();
+		cdc_task();
 		__wfi();
 	}
 }

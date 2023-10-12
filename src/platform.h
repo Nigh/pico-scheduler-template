@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "tusb.h"
-#include "cdc.h"
+#include "usb_func.h"
 
 #if G_LOG_ENABLED == 1
 char log_cache[128];

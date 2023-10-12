@@ -6,7 +6,7 @@ add_subdirectory(scheduler)
 add_executable(${PROJECT_NAME})
 
 target_sources(${PROJECT_NAME} PUBLIC
-	${CMAKE_CURRENT_LIST_DIR}/cdc.c
+	${CMAKE_CURRENT_LIST_DIR}/usb_func.c
 	${CMAKE_CURRENT_LIST_DIR}/usb_descriptors.c
     ${CMAKE_CURRENT_LIST_DIR}/main.c
 )

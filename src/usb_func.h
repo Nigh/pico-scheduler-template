@@ -1,5 +1,5 @@
-#ifndef _CDC_H_
-#define _CDC_H_
+#ifndef _USB_FUNC_H_
+#define _USB_FUNC_H_
 #include <stdint.h>
 
 void cdc_task(void);

@@ -8,6 +8,8 @@
 
 #include "platform.h"
 
+#include "tusb_config.h"
+
 #define LED_PIN PICO_DEFAULT_LED_PIN
 
 #include "pico/sync.h"
@@ -82,7 +84,6 @@ int main() {
 
 	struct repeating_timer timer;
 	add_repeating_timer_ms(250, timer_4hz_callback, NULL, &timer);
-
 	tusb_init();
 	while(true) {
 		app_sched_execute();

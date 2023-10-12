@@ -25,11 +25,6 @@ void cdc_log_print(char* str) {
 	uint16_t len = strlen(str);
 	if(tud_cdc_n_write_available(0) < len) {
 		tud_cdc_n_write_flush(0);
-		tud_cdc_n_write_str(0, "@");
 	}
 	tud_cdc_n_write_str(0, str);
-}
-
-void cdc_data_write(uint8_t buf[], uint32_t count) {
-	serial_write(1, buf, count);
 }

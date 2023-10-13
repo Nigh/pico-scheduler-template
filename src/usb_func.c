@@ -84,5 +84,5 @@ void tud_hid_set_report_cb(uint8_t itf, uint8_t report_id, hid_report_type_t rep
 	(void)report_type;
 
 	// echo back anything we received from host
-	tud_hid_report(0, buf, bufsize);
+	tud_hid_report(0, buffer, bufsize);
 }

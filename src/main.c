@@ -10,6 +10,8 @@
 
 #include "tusb_config.h"
 
+#include "ws2812_drv.h"
+
 #define LED_PIN PICO_DEFAULT_LED_PIN
 
 #include "pico/sync.h"
@@ -30,13 +32,20 @@ bool timer_4hz_callback(struct repeating_timer* t) {
 	return true;
 }
 
+#define U32RGB(r, g, b) (((uint32_t)(r) << 8) | ((uint32_t)(g) << 16) | (uint32_t)(b))
 void led_blink_routine(void) {
 	static uint8_t _tick = 0;
 	_tick += 1;
 	if(_tick & 0x1) {
 		gpio_put(LED_PIN, 1);
+		if(usb_mounted) {
+			ws2812_setpixel(U32RGB(4, 14, 4));
+		} else {
+			ws2812_setpixel(U32RGB(20, 20, 2));
+		}
 	} else {
 		gpio_put(LED_PIN, 0);
+		ws2812_setpixel(U32RGB(0, 0, 0));
 	}
 }
 
@@ -81,6 +90,7 @@ int main() {
 
 	gpio_init(LED_PIN);
 	gpio_set_dir(LED_PIN, GPIO_OUT);
+	ws2812_setup();
 
 	struct repeating_timer timer;
 	add_repeating_timer_ms(250, timer_4hz_callback, NULL, &timer);

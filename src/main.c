@@ -77,8 +77,11 @@ void uevt_log(char* str) {
 	LOG_RAW("%s\n", str);
 }
 
+#include "hardware/xosc.h"
 extern void cdc_task(void);
 int main() {
+	xosc_init();
+
 	CRITICAL_REGION_INIT();
 	app_sched_init();
 	user_event_init();

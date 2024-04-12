@@ -3,13 +3,10 @@ cmake_minimum_required(VERSION 3.16)
 add_definitions(-DG_LOG_ENABLED=1 -DEVT_LOG_ENABLED=1)
 add_subdirectory(scheduler)
 
-add_executable(${PROJECT_NAME})
+add_executable(${PROJECT_NAME} main.c)
 
-target_sources(${PROJECT_NAME} PUBLIC
-	${CMAKE_CURRENT_LIST_DIR}/usb_func.c
-	${CMAKE_CURRENT_LIST_DIR}/usb_descriptors.c
-    ${CMAKE_CURRENT_LIST_DIR}/main.c
-)
+file(GLOB SRC *.c)
+target_sources(${PROJECT_NAME} PUBLIC ${SRC})
 
 target_include_directories(${PROJECT_NAME} PUBLIC
 	${CMAKE_CURRENT_LIST_DIR}

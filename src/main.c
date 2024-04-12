@@ -10,6 +10,8 @@
 
 #include "tusb_config.h"
 
+#include "ws2812_drv.h"
+
 #define LED_PIN PICO_DEFAULT_LED_PIN
 
 #include "pico/sync.h"
@@ -30,13 +32,20 @@ bool timer_4hz_callback(struct repeating_timer* t) {
 	return true;
 }
 
+#define U32RGB(r, g, b) (((uint32_t)(r) << 8) | ((uint32_t)(g) << 16) | (uint32_t)(b))
 void led_blink_routine(void) {
 	static uint8_t _tick = 0;
 	_tick += 1;
 	if(_tick & 0x1) {
 		gpio_put(LED_PIN, 1);
+		if(usb_mounted) {
+			ws2812_setpixel(U32RGB(4, 14, 4));
+		} else {
+			ws2812_setpixel(U32RGB(20, 20, 2));
+		}
 	} else {
 		gpio_put(LED_PIN, 0);
+		ws2812_setpixel(U32RGB(0, 0, 0));
 	}
 }
 
@@ -68,8 +77,11 @@ void uevt_log(char* str) {
 	LOG_RAW("%s\n", str);
 }
 
+#include "hardware/xosc.h"
 extern void cdc_task(void);
 int main() {
+	xosc_init();
+
 	CRITICAL_REGION_INIT();
 	app_sched_init();
 	user_event_init();
@@ -81,14 +93,41 @@ int main() {
 
 	gpio_init(LED_PIN);
 	gpio_set_dir(LED_PIN, GPIO_OUT);
+	ws2812_setup();
 
 	struct repeating_timer timer;
 	add_repeating_timer_ms(250, timer_4hz_callback, NULL, &timer);
 	tusb_init();
+	cdc_log_init();
 	while(true) {
 		app_sched_execute();
 		tud_task();
 		cdc_task();
 		__wfi();
+	}
+}
+
+#include "pico/bootrom.h"
+static char serial_fifo[16];
+static uint8_t serial_wp = 0;
+uint8_t serial_got(const char* str) {
+	uint8_t len = strlen(str);
+	for(uint8_t i = 1; i <= len; i++) {
+		if(serial_fifo[serial_wp + (0x10 - i) & 0xF] != str[len - i]) {
+			return 0;
+		}
+	}
+	return 1;
+}
+void serial_receive(uint8_t const* buffer, uint16_t bufsize) {
+	for(uint16_t i = 0; i < bufsize; i++) {
+		if((*buffer == 0x0A) || (*buffer == 0x0D)) {
+			if(serial_got("BOOT")) {
+				ws2812_setpixel(U32RGB(20, 0, 20));
+				reset_usb_boot(0, 0);
+			}
+		} else {
+			serial_fifo[serial_wp++ & 0xF] = *buffer++;
+		}
 	}
 }

@@ -25,6 +25,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 	pico_sync
 	hardware_adc
 	hardware_sync
+	hardware_pio
 )
 # Create map/bin/hex/uf2 files
 pico_add_extra_outputs(${PROJECT_NAME})
